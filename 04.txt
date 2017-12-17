@@ -1,0 +1,41 @@
+题目描述:查找所有已经分配部门的员工的last_name和first_name
+CREATE TABLE `dept_emp` (
+`emp_no` int(11) NOT NULL,
+`dept_no` char(4) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+
+solution 1:
+SELECT e.last_name, e.first_name, d.dept_no FROM dept_emp d NATURAL JOIN employees e;
+
+solution 2:
+SELECT e.last_name,e.first_name,d.dept_no FROM dept_emp AS d
+INNER JOIN employees AS e ON e.emp_no = d.emp_no;
+
+
+
+Join操作基本分为3大类：外连接(细分为：左连接、右连接、全连接)、自然连接、内连接
+Join操作的共性：第一步均为将所有参与操作的表进行了一个笛卡儿积，然后才依据各连接条件进行记录的筛选
+
+自然连接是通过对参与表关系中所有同名的属性对取等（即相等比较）来完成的，故无须自己添加连接条件
+与外连接的区别在于对于无法匹配的记录外连接会虚拟一条与之匹配的记录来保全连接表中的所有记录，但自然连接不会
+内连接与自然连接基本相同，不同之处在于自然连接只能是同名属性的等值连接，而内连接可以使用using或on子句来指定连接条件，
+连接条件中指出某两字段相等（可以不同名）。
+
+条件连接就是在多个表的笛卡尔积中选取满足条件的行的连接，例如  select * from A,B where A.a > A.b  之类的有条件的查询。
+等值连接就是特殊的条件连接，当条件为某字段=某字段时，即为等值连接。如SELECT ename,sal,dname FROM emp,dept WHERE emp.deptno=dept.deptno; 
+自然连接是一种特殊的等值连接，他要求多个表有相同的属性字段，然后条件为相同的属性字段值相等，最后再将表中重复的属性字段去掉，
+即为自然连接。如A中a,b,c字段，B中有c,d字段，则select * from A natural join B  相当于 select A.a,A.b,A.c,B.d from A.c = B.c  。
+
+内连接与等值连接的区别：
+内连接：两个表（或连接）中某一数据项相等的连接称为内连接。等值连接一般用where字句设置条件，内连接一般用on字句设置条件，
+但内连接与等值连接效果是相同的

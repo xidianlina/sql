@@ -1,0 +1,51 @@
+题目描述
+获取有奖金的员工相关信息。
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+CREATE TABLE `dept_emp` (
+`emp_no` int(11) NOT NULL,
+`dept_no` char(4) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`dept_no`));
+create table emp_bonus(
+emp_no int not null,
+recevied datetime not null,
+btype smallint not null);
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL, PRIMARY KEY (`emp_no`,`from_date`));
+给出emp_no、first_name、last_name、奖金类型btype、对应的当前薪水情况salary以及奖金金额bonus。
+bonus类型btype为1其奖金为薪水salary的10%，btype为2其奖金为薪水的20%，其他类型均为薪水的30%。 当前薪水表示to_date='9999-01-01'
+
+solution 1:
+SELECT e.emp_no, e.first_name, e.last_name, b.btype, s.salary, 
+(CASE b.btype 
+ WHEN 1 THEN s.salary * 0.1
+ WHEN 2 THEN s.salary * 0.2
+ ELSE s.salary * 0.3 END) AS bonus
+FROM employees AS e INNER JOIN emp_bonus AS b ON e.emp_no = b.emp_no
+INNER JOIN salaries AS s ON e.emp_no = s.emp_no AND s.to_date = '9999-01-01'
+
+solution 2:
+SELECT e.emp_no, e.first_name, e.last_name, b.btype, s.salary, 
+(s.salary * b.btype / 10.0) AS bonus
+FROM employees AS e INNER JOIN emp_bonus AS b ON e.emp_no = b.emp_no
+INNER JOIN salaries AS s ON e.emp_no = s.emp_no AND s.to_date = '9999-01-01'
+
+solution 3:
+SELECT employees.emp_no,employees.first_name,employees.last_name,emp_bonus.btype,salaries.salary,
+(CASE WHEN emp_bonus.btype=1 THEN salaries.salary*0.1
+WHEN emp_bonus.btype=2 THEN salaries.salary*0.2
+ELSE salaries.salary*0.3 END) AS bonus
+FROM employees,salaries,emp_bonus
+WHERE employees.emp_no=salaries.emp_no AND employees.emp_no=emp_bonus.emp_no
+AND salaries.to_date='9999-01-01'

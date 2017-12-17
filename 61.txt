@@ -1,0 +1,18 @@
+题目描述:对于employees表中，给出奇数行的first_name
+CREATE TABLE `employees` (
+`emp_no` int(11) NOT NULL,
+`birth_date` date NOT NULL,
+`first_name` varchar(14) NOT NULL,
+`last_name` varchar(16) NOT NULL,
+`gender` char(1) NOT NULL,
+`hire_date` date NOT NULL,
+PRIMARY KEY (`emp_no`));
+
+solution 1:
+SELECT e1.first_name FROM employees e1
+WHERE (SELECT count(*) FROM employees e2
+WHERE e1.first_name <=e2.first_name)%2=1;
+
+solution 2:
+SELECT e1.first_name FROM (SELECT e2.first_name, (SELECT COUNT(*) FROM employees AS e3 
+WHERE e3.first_name <= e2.first_name) AS rowid FROM employees AS e2) AS e1 WHERE e1.rowid % 2 = 1

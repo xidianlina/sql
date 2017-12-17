@@ -1,0 +1,16 @@
+题目描述:按照salary的累计和running_total，其中running_total为前两个员工的salary累计和，其他以此类推。 具体结果如下Demo展示。。
+CREATE TABLE `salaries` ( `emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL,
+PRIMARY KEY (`emp_no`,`from_date`));
+
+solution 1:
+SELECT s1.emp_no, s1.salary,(SELECT SUM(s2.salary) FROM salaries AS s2 
+WHERE s2.emp_no <= s1.emp_no AND s2.to_date = '9999-01-01') AS running_total 
+FROM salaries AS s1 WHERE s1.to_date = '9999-01-01' ORDER BY s1.emp_no
+
+solution 2:
+SELECT s2.emp_no,s2.salary,SUM(s1.salary) AS running_total
+FROM salaries AS s1 INNER JOIN salaries AS s2 ON s1.emp_no <= s2.emp_no
+WHERE s1.to_date = "9999-01-01" AND s2.to_date = "9999-01-01" GROUP BY s2.emp_no

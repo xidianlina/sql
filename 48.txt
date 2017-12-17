@@ -1,0 +1,19 @@
+题目描述:将所有获取奖金的员工当前的薪水增加10%。
+create table emp_bonus(
+emp_no int not null,
+recevied datetime not null,
+btype smallint not null);
+CREATE TABLE `salaries` (
+`emp_no` int(11) NOT NULL,
+`salary` int(11) NOT NULL,
+`from_date` date NOT NULL,
+`to_date` date NOT NULL, PRIMARY KEY (`emp_no`,`from_date`));
+
+solution 1:
+UPDATE salaries SET salary = salary * 1.1 
+WHERE emp_no IN (SELECT emp_no FROM emp_bonus)
+
+solution 2:
+UPDATE salaries SET salary = salary * 1.1 WHERE emp_no IN
+(SELECT s.emp_no FROM salaries AS s INNER JOIN emp_bonus AS eb 
+ON s.emp_no = eb.emp_no)
