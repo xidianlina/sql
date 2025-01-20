@@ -1,0 +1,29 @@
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+
+
+		// ------------------------------------------
+		// 模拟请求接口
+		String requestTxt="{\"success\":true,\"code\":2000,\"message\":\"成功\",\"data\":{\"total\":17,\"rows\":[{\"id\":\"1\",\"name\":\"刘德华\",\"intro\":\"毕业于师范大学数学系,执教数学6年有余\"}]}}";
+
+		// 模拟读取本地配置文件
+		Properties properties = new Properties();
+		try (FileInputStream fileInputStream = new FileInputStream("src/main/java/com/qihoo/secbrain/test/config.properties")) {
+			// 加载文件
+			properties.load(fileInputStream);
+			// 获取配置项的值
+			String testApiTarget = properties.getProperty("testApi");
+			System.out.println("期望比对条件: " + testApiTarget);
+
+			// 输出返回体 和 比对参数 计算结果
+			System.out.println(Check(requestTxt, testApiTarget));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// ------------------------------------------
+		
+		
